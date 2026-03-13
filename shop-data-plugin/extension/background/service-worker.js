@@ -105,12 +105,15 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 /**
  * 定时同步数据（可选功能）
+ * 注意：需要先创建alarm才能监听
  */
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === 'syncData') {
-    syncData();
-  }
-});
+if (chrome.alarms) {
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === 'syncData') {
+      syncData();
+    }
+  });
+}
 
 /**
  * 同步数据

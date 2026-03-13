@@ -6,7 +6,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "downloads"
+    "downloads",
+    "alarms"
   ],
   "host_permissions": [
     "https://mms.pinduoduo.com/*",
