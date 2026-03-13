@@ -1,0 +1,477 @@
+/* 店铺数据分析助手 - 样式 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f7fa;
+  min-width: 400px;
+  max-width: 600px;
+}
+
+/* 登录界面 */
+.login-container {
+  padding: 30px;
+}
+
+.login-box {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tabs button.active {
+  color: #667eea;
+  border-bottom: 2px solid #667eea;
+}
+
+.auth-form .form-group {
+  margin-bottom: 15px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* 主界面 */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+}
+
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 18px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.btn-text:hover {
+  opacity: 1;
+}
+
+/* 导航 */
+.nav-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.nav-tabs button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.nav-tabs button.active {
+  color: #667eea;
+  border-bottom: 2px solid #667eea;
+  background: #f8f9ff;
+}
+
+/* 内容区域 */
+.content {
+  flex: 1;
+  padding: 15px;
+  background: #f5f7fa;
+}
+
+/* 统计卡片 */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 快捷操作 */
+.quick-actions h3 {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.btn-action {
+  padding: 15px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.btn-action:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* 订单列表 */
+.order-list {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.order-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.order-id {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+}
+
+.order-status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.order-status.success { background: #e6f7e6; color: #52c41a; }
+.order-status.info { background: #e6f7ff; color: #1890ff; }
+.order-status.warning { background: #fff7e6; color: #fa8c16; }
+.order-status.danger { background: #fff2f0; color: #ff4d4f; }
+
+.order-body .product-name {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.order-info {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: #999;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 14px;
+}
+
+/* 商品列表 */
+.product-list {
+  background: white;
+  border-radius: 8px;
+}
+
+.product-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-item .product-name {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.product-costs {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: #999;
+}
+
+/* 设置 */
+.settings-section {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.settings-section h3 {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.settings-section .form-group {
+  margin-bottom: 15px;
+}
+
+.settings-section label {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.settings-section input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* 弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  color: #333;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.import-options {
+  margin-bottom: 20px;
+}
+
+.import-option {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.import-option:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.option-icon {
+  font-size: 30px;
+  margin-right: 15px;
+}
+
+.option-text strong {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+.option-text p {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+.import-tips {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.import-tips h4 {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.import-tips ul {
+  padding-left: 20px;
+  font-size: 12px;
+  color: #999;
+}
+
+.import-tips li {
+  margin-bottom: 5px;
+}

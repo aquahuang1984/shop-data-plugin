@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>店铺数据分析助手</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 登录状态检查 -->
+    <div v-if="!isLoggedIn" class="login-container">
+      <div class="login-box">
+        <h2>店铺数据分析助手</h2>
+        <p class="subtitle">拼多多商家数据分析工具</p>
+
+        <div class="tabs">
+          <button :class="{active: activeTab === 'login'}" @click="activeTab = 'login'">登录</button>
+          <button :class="{active: activeTab === 'register'}" @click="activeTab = 'register'">注册</button>
+        </div>
+
+        <!-- 登录表单 -->
+        <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="auth-form">
+          <div class="form-group">
+            <input type="text" v-model="loginForm.username" placeholder="用户名" required>
+          </div>
+          <div class="form-group">
+            <input type="password" v-model="loginForm.password" placeholder="密码" required>
+          </div>
+          <button type="submit" class="btn-primary" :disabled="loading">
+            {{ loading ? '登录中...' : '登录' }}
+          </button>
+          <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
+        </form>
+
+        <!-- 注册表单 -->
+        <form v-else @submit.prevent="handleRegister" class="auth-form">
+          <div class="form-group">
+            <input type="text" v-model="registerForm.username" placeholder="用户名" required>
+          </div>
+          <div class="form-group">
+            <input type="email" v-model="registerForm.email" placeholder="邮箱（选填）">
+          </div>
+          <div class="form-group">
+            <input type="password" v-model="registerForm.password" placeholder="密码" required>
+          </div>
+          <div class="form-group">
+            <input type="password" v-model="registerForm.confirmPassword" placeholder="确认密码" required>
+          </div>
+          <button type="submit" class="btn-primary" :disabled="loading">
+            {{ loading ? '注册中...' : '注册' }}
+          </button>
+          <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div v-else class="main-container">
+      <header class="header">
+        <h1>店铺数据分析</h1>
+        <div class="user-info">
+          <span>{{ user?.username }}</span>
+          <button @click="handleLogout" class="btn-text">退出</button>
+        </div>
+      </header>
+
+      <!-- 导航标签 -->
+      <nav class="nav-tabs">
+        <button v-for="tab in tabs" :key="tab.id"
+                :class="{active: currentTab === tab.id}"
+                @click="currentTab = tab.id">
+          {{ tab.name }}
+        </button>
+      </nav>
+
+      <!-- 内容区域 -->
+      <main class="content">
+        <!-- 数据概览 -->
+        <div v-if="currentTab === 'overview'" class="tab-content">
+          <div class="stats-cards">
+            <div class="stat-card">
+              <div class="stat-value">{{ stats.totalOrders }}</div>
+              <div class="stat-label">总订单数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">¥{{ formatNumber(stats.totalSales) }}</div>
+              <div class="stat-label">总销售额</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">¥{{ formatNumber(stats.totalProfit) }}</div>
+              <div class="stat-label">总利润</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">{{ stats.profitRate }}%</div>
+              <div class="stat-label">利润率</div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <h3>快捷操作</h3>
+            <div class="action-buttons">
+              <button @click="showImportModal = true" class="btn-action">
+                📥 导入订单
+              </button>
+              <button @click="grabOrders" class="btn-action" v-if="isPddPage">
+                🔄 抓取当前页
+              </button>
+              <button @click="exportReport" class="btn-action">
+                📊 导出报表
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 订单管理 -->
+        <div v-if="currentTab === 'orders'" class="tab-content">
+          <div class="toolbar">
+            <input type="text" v-model="searchKeyword" placeholder="搜索订单号、商品名..." class="search-input">
+            <button @click="showImportModal = true" class="btn-primary">导入订单</button>
+          </div>
+
+          <div class="order-list">
+            <div v-for="order in orders" :key="order.id" class="order-item">
+              <div class="order-header">
+                <span class="order-id">{{ order.order_id }}</span>
+                <span class="order-status" :class="getStatusClass(order.status)">{{ order.status }}</span>
+              </div>
+              <div class="order-body">
+                <div class="product-name">{{ order.product_name || '未知商品' }}</div>
+                <div class="order-info">
+                  <span>数量: {{ order.quantity }}</span>
+                  <span>金额: ¥{{ order.total_amount }}</span>
+                  <span>利润: ¥{{ order.gross_profit }}</span>
+                </div>
+              </div>
+            </div>
+            <div v-if="orders.length === 0" class="empty-state">
+              暂无订单数据，请导入订单
+            </div>
+          </div>
+        </div>
+
+        <!-- 成本管理 -->
+        <div v-if="currentTab === 'costs'" class="tab-content">
+          <div class="toolbar">
+            <input type="text" v-model="productSearch" placeholder="搜索商品..." class="search-input">
+            <button @click="showAddProductModal = true" class="btn-primary">添加商品</button>
+          </div>
+
+          <div class="product-list">
+            <div v-for="product in products" :key="product.id" class="product-item">
+              <div class="product-name">{{ product.name }}</div>
+              <div class="product-costs">
+                <span>成本: ¥{{ product.cost_price }}</span>
+                <span>运费: ¥{{ product.shipping_cost }}</span>
+                <span>佣金率: {{ (product.commission_rate * 100).toFixed(2) }}%</span>
+              </div>
+              <button @click="editProduct(product)" class="btn-text">编辑</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 设置 -->
+        <div v-if="currentTab === 'settings'" class="tab-content">
+          <div class="settings-section">
+            <h3>服务器配置</h3>
+            <div class="form-group">
+              <label>API地址</label>
+              <input type="text" v-model="apiUrl" placeholder="http://localhost:8000">
+              <button @click="saveSettings" class="btn-primary">保存</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>默认配置</h3>
+            <div class="form-group">
+              <label>默认佣金比例</label>
+              <input type="number" v-model="defaultCommissionRate" step="0.001" placeholder="0.006">
+            </div>
+            <button @click="saveSettings" class="btn-primary">保存设置</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- 导入订单弹窗 -->
+    <div v-if="showImportModal" class="modal-overlay" @click.self="showImportModal = false">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>导入订单</h3>
+          <button @click="showImportModal = false" class="btn-close">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="import-options">
+            <div class="import-option" @click="triggerFileInput">
+              <div class="option-icon">📁</div>
+              <div class="option-text">
+                <strong>文件导入</strong>
+                <p>选择Excel或CSV文件</p>
+              </div>
+            </div>
+            <input type="file" ref="fileInput" @change="handleFileImport" accept=".xlsx,.xls,.csv" style="display: none">
+          </div>
+          <div class="import-tips">
+            <h4>导入说明</h4>
+            <ul>
+              <li>支持Excel(.xlsx, .xls)和CSV格式</li>
+              <li>自动识别拼多多订单导出格式</li>
+              <li>重复订单将自动跳过</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/vue.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

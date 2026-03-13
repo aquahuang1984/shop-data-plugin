@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置 - 店铺数据分析助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 18px;
+      margin: 25px 0 15px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    .status.connected {
+      background: #e6f7e6;
+      color: #52c41a;
+    }
+
+    .status.error {
+      background: #fff2f0;
+      color: #ff4d4f;
+    }
+
+    .api-test {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .api-test input {
+      flex: 1;
+    }
+
+    .version-info {
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ 设置</h1>
+
+    <div class="section">
+      <h2>服务器配置</h2>
+      <div class="form-group">
+        <label>API服务地址</label>
+        <div class="api-test">
+          <input type="text" id="apiUrl" placeholder="http://localhost:8000" value="http://localhost:8000">
+          <button class="btn" id="testBtn">测试连接</button>
+        </div>
+        <p class="help-text">后端服务的API地址，默认为本地开发服务器</p>
+        <span id="connectionStatus" class="status"></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>默认配置</h2>
+      <div class="form-group">
+        <label>默认佣金比例</label>
+        <input type="number" id="commissionRate" step="0.001" value="0.006" placeholder="0.006">
+        <p class="help-text">拼多多平台默认佣金比例为0.6%</p>
+      </div>
+
+      <div class="form-group">
+        <label>默认广告费比例</label>
+        <input type="number" id="adCostRate" step="0.001" value="0" placeholder="0">
+        <p class="help-text">广告推广费用占销售额的比例</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>数据管理</h2>
+      <div class="form-group">
+        <label>清除本地数据</label>
+        <button class="btn" id="clearDataBtn" style="background: #ff4d4f;">清除所有本地数据</button>
+        <p class="help-text">这将清除浏览器中存储的所有本地数据（包括登录状态）</p>
+      </div>
+    </div>
+
+    <div style="text-align: right;">
+      <button class="btn" id="saveBtn">保存设置</button>
+    </div>
+
+    <div class="version-info">
+      店铺数据分析助手 v1.0.0
+    </div>
+  </div>
+
+  <script>
+    // 加载设置
+    async function loadSettings() {
+      const result = await chrome.storage.local.get(['apiUrl', 'commissionRate', 'adCostRate']);
+      if (result.apiUrl) {
+        document.getElementById('apiUrl').value = result.apiUrl;
+      }
+      if (result.commissionRate) {
+        document.getElementById('commissionRate').value = result.commissionRate;
+      }
+      if (result.adCostRate) {
+        document.getElementById('adCostRate').value = result.adCostRate;
+      }
+    }
+
+    // 保存设置
+    async function saveSettings() {
+      const apiUrl = document.getElementById('apiUrl').value;
+      const commissionRate = parseFloat(document.getElementById('commissionRate').value) || 0.006;
+      const adCostRate = parseFloat(document.getElementById('adCostRate').value) || 0;
+
+      await chrome.storage.local.set({
+        apiUrl,
+        commissionRate,
+        adCostRate
+      });
+
+      alert('设置已保存');
+    }
+
+    // 测试API连接
+    async function testConnection() {
+      const apiUrl = document.getElementById('apiUrl').value;
+      const statusEl = document.getElementById('connectionStatus');
+      const btn = document.getElementById('testBtn');
+
+      btn.disabled = true;
+      btn.textContent = '测试中...';
+      statusEl.textContent = '';
+      statusEl.className = 'status';
+
+      try {
+        const response = await fetch(`${apiUrl}/health`);
+        if (response.ok) {
+          statusEl.textContent = '连接成功';
+          statusEl.classList.add('connected');
+        } else {
+          throw new Error('连接失败');
+        }
+      } catch (error) {
+        statusEl.textContent = '连接失败';
+        statusEl.classList.add('error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '测试连接';
+      }
+    }
+
+    // 清除数据
+    async function clearData() {
+      if (confirm('确定要清除所有本地数据吗？此操作不可恢复。')) {
+        await chrome.storage.local.clear();
+        alert('数据已清除');
+        location.reload();
+      }
+    }
+
+    // 绑定事件
+    document.getElementById('saveBtn').addEventListener('click', saveSettings);
+    document.getElementById('testBtn').addEventListener('click', testConnection);
+    document.getElementById('clearDataBtn').addEventListener('click', clearData);
+
+    // 加载设置
+    loadSettings();
+  </script>
+</body>
+</html>
